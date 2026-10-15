@@ -2,6 +2,7 @@
 import { pages } from '~/data/skills'
 
 const menuOpen = ref(false)
+const { songAppUrl } = useRuntimeConfig().public
 </script>
 
 <template>
@@ -41,9 +42,19 @@ const menuOpen = ref(false)
             首頁
           </NuxtLink>
         </li>
-        <li v-for="page in pages" :key="page.path">
+        <li v-for="(page, key) in pages" :key="key">
+          <a
+            v-if="page.status === 'external' && songAppUrl"
+            :href="songAppUrl"
+            target="_blank"
+            rel="noopener"
+            class="flex items-center justify-between rounded-md px-3 py-2 hover:bg-hover"
+          >
+            {{ page.name }}
+            <span class="text-xs text-muted">獨立專案 ↗</span>
+          </a>
           <NuxtLink
-            v-if="page.status === 'done'"
+            v-else-if="page.status === 'done'"
             :to="page.path"
             class="block rounded-md px-3 py-2 hover:bg-hover"
             active-class="bg-brand-500 font-medium text-white hover:bg-brand-500"
@@ -52,7 +63,9 @@ const menuOpen = ref(false)
           </NuxtLink>
           <span v-else class="flex items-center justify-between px-3 py-2 text-brand-400">
             {{ page.name }}
-            <span class="rounded bg-cream px-1.5 py-0.5 text-xs text-brand-600">開發中</span>
+            <span class="rounded bg-cream px-1.5 py-0.5 text-xs text-brand-600">
+              {{ page.status === 'external' ? '獨立專案・開發中' : '開發中' }}
+            </span>
           </span>
         </li>
       </ul>

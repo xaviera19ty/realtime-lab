@@ -1,6 +1,8 @@
 # Realtime Lab 即時互動平台
 
-即時投票、排隊叫號、互動點歌、協作白板與營運儀表板。一個 monorepo 放三個專案，兩個後端依特性分工。
+即時投票、排隊叫號、協作白板與營運儀表板。一個 monorepo 放三個專案，兩個後端依特性分工。
+
+互動點歌已拆成前後端分離的獨立專案：`song-request-web`（Nuxt 4）與 `song-request-api`（Go），首頁以外部連結呈現（網址設定在 `NUXT_PUBLIC_SONG_APP_URL`）。
 
 | 專案 | 技術 | 負責 |
 | --- | --- | --- |

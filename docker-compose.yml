@@ -82,6 +82,7 @@ services:
     build: ./web
     environment:
       NUXT_API_BASE: http://api:8080
+      NUXT_PUBLIC_SONG_APP_URL: ${SONG_APP_URL:-}
     depends_on:
       - api
     ports:

@@ -8,6 +8,8 @@
   Controller 只做輸入驗證與呼叫 service，商業邏輯放 `Services/`。
 - `core/`：Go。即時 WebSocket、高併發寫入、原子操作、排程。不提供建立或設定類 API。
 
+互動點歌**不在這個 repo**：已拆成前後端分離的獨立專案（`song-request-web`、`song-request-api`），這裡只保留首頁的外部連結。不要在這裡新增點歌相關的程式碼或資料表。
+
 判斷放哪裡：會被大量同時觸發、需要即時推播、或要靠原子操作守住正確性的放 core；其餘放 api。
 
 ## 資料規則

@@ -10,6 +10,13 @@ const groupDot = {
   ai: 'bg-rose',
 }
 
+const { songAppUrl } = useRuntimeConfig().public
+
+const statusLabel = (page) => {
+  if (page.status === 'external') return songAppUrl ? '獨立專案 ↗' : '獨立專案・開發中'
+  return page.status === 'done' ? '已完成' : '開發中'
+}
+
 const activeSkill = ref(null)
 
 const skillsByGroup = computed(() =>
@@ -73,10 +80,12 @@ const { data: status, error: statusError } = await useApi('/api/system/status')
     <section>
       <h2 class="text-lg font-semibold text-heading">功能</h2>
       <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div
+        <component
+          :is="page.status === 'external' && songAppUrl ? 'a' : 'div'"
           v-for="(page, key) in pages"
           :key="key"
-          class="rounded-xl bg-card p-4 ring-1 transition"
+          v-bind="page.status === 'external' && songAppUrl ? { href: songAppUrl, target: '_blank', rel: 'noopener' } : {}"
+          class="block rounded-xl bg-card p-4 ring-1 transition"
           :class="isUsedBy(key)
             ? (activeSkill ? 'ring-2 ring-brand-400' : 'ring-line hover:ring-line-strong')
             : 'opacity-40 ring-line'"
@@ -87,10 +96,10 @@ const { data: status, error: statusError } = await useApi('/api/system/status')
               class="rounded-full px-2 py-0.5 text-xs"
               :class="page.status === 'done' ? 'bg-mint text-brand-800' : 'bg-cream text-brand-600'"
             >
-              {{ page.status === 'done' ? '已完成' : '開發中' }}
+              {{ statusLabel(page) }}
             </span>
           </div>
-        </div>
+        </component>
       </div>
     </section>
 
