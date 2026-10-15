@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RealtimeLab.Api/RealtimeLab.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RealtimeLab.Api.Tests/RealtimeLab.Api.Tests.csproj" />
+  </Folder>
+</Solution>

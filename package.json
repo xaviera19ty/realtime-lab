@@ -1,0 +1,12 @@
+{
+  "name": "realtime-lab",
+  "private": true,
+  "packageManager": "pnpm@12.11.2",
+  "description": "根目錄只做轉呼叫：在 realtime-lab/ 直接跑 pnpm install / pnpm dev，實際執行的是 web/",
+  "scripts": {
+    "postinstall": "pnpm --dir web install",
+    "dev": "pnpm --dir web dev",
+    "build": "pnpm --dir web build",
+    "preview": "pnpm --dir web preview"
+  }
+}

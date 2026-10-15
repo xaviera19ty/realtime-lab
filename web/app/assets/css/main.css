@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+/* 深色模式由 <html class="dark"> 切換，而不是只跟隨系統設定 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * 色票來源：
+ *   歐薄荷 CMYK 31-31-8-2  → RGB 184-175-202 (#B8AFCA) = brand-300
+ *   青紫色 CMYK 60-65-5-5  → RGB 119-95-159  (#775F9F) = brand-500
+ * 其餘 brand-* 由這兩色往淺/深延伸；accent-* 取自同一份配色表的搭配色。
+ */
+@theme {
+  --color-brand-50: #f7f5fa;
+  --color-brand-100: #eeeaf4;
+  --color-brand-200: #dcd6e6;
+  --color-brand-300: #b8afca;
+  --color-brand-400: #9a8bb8;
+  --color-brand-500: #775f9f;
+  --color-brand-600: #654f8a;
+  --color-brand-700: #523f71;
+  --color-brand-800: #3e3056;
+  --color-brand-900: #2b2140;
+  --color-brand-950: #17121f;
+
+  --color-blush: #eedce4;   /* 238-220-228 */
+  --color-rose: #dba4a9;    /* 219-164-169 */
+  --color-mint: #c5e3df;    /* 197-227-223 */
+  --color-cream: #f9f6cf;   /* 249-246-207 */
+  --color-sand: #e4caa2;    /* 228-202-162 */
+  --color-gold: #dec36e;    /* 222-195-110 */
+  --color-sky: #538cc0;     /* 83-140-192 */
+  --color-berry: #ce7796;   /* 206-119-150 */
+
+  /* 語意色：頁面寫這些，深淺色只在下面 .dark 換值 */
+  --color-surface: var(--color-brand-50);       /* 頁面底色 */
+  --color-card: #ffffff;                        /* 卡片、側邊欄 */
+  --color-hover: var(--color-brand-100);        /* 滑過的底色 */
+  --color-line: var(--color-brand-200);         /* 邊框 */
+  --color-line-strong: var(--color-brand-400);  /* 滑過的邊框 */
+  --color-ink: var(--color-brand-900);          /* 內文 */
+  --color-heading: var(--color-brand-800);      /* 標題 */
+  --color-muted: var(--color-brand-600);        /* 說明、標籤 */
+  --color-accent: var(--color-brand-700);       /* Logo、強調文字 */
+  --color-danger: #a8456b;                      /* berry 加深，白底文字對比 ≥ 4.5 */
+}
+
+@layer base {
+  :root.dark {
+    color-scheme: dark;
+    --color-surface: var(--color-brand-950);
+    --color-card: #221a30;
+    --color-hover: #2f2542;
+    --color-line: #3a2f4f;
+    --color-line-strong: #7a6a99;
+    --color-ink: var(--color-brand-200);
+    --color-heading: var(--color-brand-100);
+    --color-muted: var(--color-brand-300);
+    --color-accent: var(--color-brand-300);
+    --color-danger: #e59ab4;
+  }
+
+  body {
+    @apply bg-surface text-ink antialiased transition-colors;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-400;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+}

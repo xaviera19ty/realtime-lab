@@ -1,0 +1,26 @@
+# 環境變數
+.env
+
+# Node / Nuxt
+node_modules/
+.nuxt/
+.output/
+.data/
+dist/
+
+# .NET
+bin/
+obj/
+*.user
+TestResults/
+
+# Go
+core/bin/
+*.test
+coverage.out
+
+# 編輯器與系統
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store

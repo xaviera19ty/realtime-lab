@@ -1,0 +1,56 @@
+openapi: 3.1.0
+info:
+  title: Realtime Lab core（Go 內部 API）
+  version: 0.1.0
+  description: |
+    只在 Docker 內網開放，給 api（ASP.NET Core）呼叫。對外只有 /ws。
+    錯誤格式統一為 Error。改 API 時同一個 PR 必須一起改這份規格。
+servers:
+  - url: http://core:8080
+paths:
+  /healthz:
+    get:
+      summary: 程式活著
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Status" }
+  /readyz:
+    get:
+      summary: MySQL 與 Redis 連得上
+      responses:
+        "200":
+          description: 全部可用
+        "503":
+          description: 有依賴服務連不上
+  /v1/ping:
+    get:
+      summary: 確認 api → core 連線，回傳 request id
+      parameters:
+        - in: header
+          name: X-Request-Id
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  service: { type: string, example: core }
+                  requestId: { type: string }
+components:
+  schemas:
+    Status:
+      type: object
+      properties:
+        status: { type: string, example: ok }
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string, example: ALREADY_VOTED }
+        message: { type: string }

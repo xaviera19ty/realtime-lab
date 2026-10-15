@@ -1,0 +1,3 @@
+# pnpm 預設會擋下套件的安裝腳本；這裡列出需要放行的套件
+allowBuilds:
+  esbuild: true

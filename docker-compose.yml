@@ -1,0 +1,92 @@
+# Realtime Lab：一行指令啟動六個服務
+#   docker compose up -d --build
+# 只起資料庫類服務（本機用 pnpm dev / dotnet watch / air 開發時）：
+#   docker compose up -d mysql redis mongo
+
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --slow-query-log=ON
+      - --long-query-time=0.1
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"   # 只給本機開發用，上線時拿掉
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "127.0.0.1:27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build: ./api
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${APP_ENV}
+      ConnectionStrings__MySql: server=mysql;port=3306;database=${MYSQL_DATABASE};user=${MYSQL_USER};password=${MYSQL_PASSWORD}
+      ConnectionStrings__Redis: redis:6379
+      ConnectionStrings__Mongo: mongodb://mongo:27017/realtime_lab
+      Core__BaseUrl: http://core:8080
+      Jwt__Secret: ${JWT_SECRET}
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      mongo: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  core:
+    build: ./core
+    environment:
+      MYSQL_DSN: ${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(mysql:3306)/${MYSQL_DATABASE}?parseTime=true
+      REDIS_ADDR: redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      api: { condition: service_healthy }   # 等 api 跑完 EF Core migration
+    ports:
+      - "8081:8080"   # 上線後只透過 Caddy 開放 /ws
+
+  web:
+    build: ./web
+    environment:
+      NUXT_API_BASE: http://api:8080
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+
+volumes:
+  mysql-data:
+  mongo-data:
